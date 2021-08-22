@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 
 // Nappulan komponentti
 const Button = ({text, handleClick}) => {
-  console.log({text})
   return (
     <button onClick={handleClick}>
       {text}
@@ -14,9 +13,15 @@ const Button = ({text, handleClick}) => {
 // Statistiikka komponentin rivikomponentti
 const StatisticsLine = (props) => {
   return (
-    <div>
-      <p>{props.text} {props.value}</p>
-    </div>
+    //<div>
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value} {props.unit}</td>
+
+    </tr>
+
+    //   <p>{props.text} {props.value}</p> 
+    //</div>
   ) 
 }
 
@@ -31,17 +36,18 @@ const Statistics = (props) => {
        <p>No feedback given</p>
      </div> 
     )
-  else 
+    
   return (
-    <div>
-      <h1>statistics</h1>
-      <StatisticsLine text="good" value={good}/>
-      <StatisticsLine text="neutral" value={neutral}/>
-      <StatisticsLine text="bad" value={bad}/>
-      <StatisticsLine text="amount" value={amount}/>
-      <StatisticsLine text="average" value={sum/amount}/>
-      <StatisticsLine text="positive" value={good/amount*100}/>
-    </div>
+    <table>
+      <tbody>
+      <StatisticsLine text="good" value={good} unit=""/>
+      <StatisticsLine text="neutral" value={neutral} unit=""/>
+      <StatisticsLine text="bad" value={bad} unit=""/>
+      <StatisticsLine text="amount" value={amount} unit=""/>
+      <StatisticsLine text="average" value={sum/amount} unit=""/>
+      <StatisticsLine text="positive" value={good/amount*100} unit="%"/>
+      </tbody>
+    </table>
   )
 }
 
@@ -85,7 +91,9 @@ const App = (props) => {
        <Button handleClick={handleBadClick}
       text="bad"
       />
-
+    
+      <h1>statistics</h1>
+    
       <Statistics good={good} neutral={neutral} bad={bad} amount={amount} sum={sum}/>
 
 
