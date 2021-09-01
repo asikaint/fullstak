@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 
+
+
 // Nappulan komponentti
 const Button = ({text, handleClick}) => {
   return (
@@ -10,14 +12,39 @@ const Button = ({text, handleClick}) => {
 }
 
 //
-const TotalPoints = (props) => {
+const TotalPoints = ({points}) => {
   return (
     <div>
       <p>
-        has {props.points} points
+        {points}
       </p>
     </div>
   ) 
+}
+
+const DailyAnecdote = ({anecdotes, points}) => {
+  return (
+    <div>
+      <h1>
+        Anecdote of the day
+      </h1>
+      <p>{anecdotes}</p>
+      <TotalPoints points = {points} />
+    </div>
+  )
+  
+}
+
+const MostLikedAnecdote = ({anecdotes, points}) => {
+return (
+    <div>
+      <h1>
+        Anecdote with most votes
+      </h1>
+      <p>{anecdotes}</p> 
+      <TotalPoints points = {points} />
+  </div>
+  )
 }
 
 const App = () => {
@@ -30,28 +57,28 @@ const App = () => {
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.'
   ]
-   
   const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState(Array.apply(null, new Array(anecdotes.length)).map(Number.prototype.valueOf,0))
+  const [maxPoints, setMaxPoints] = useState(0);
 
+
+  // Button handlerit
   const handleNextAnecdote = () => {
       setSelected(Math.floor((Math.random() * 6) + 1))
   }
-
-  // Nappula äänestämiseen
   const handleVoteAnecdote = () => {
-    const copy = { ...points }
-    copy[selected] += 1   
-    setPoints(copy)
+    const arr =[ ...points ]
+    arr[selected] += 1   
+    setPoints(arr)
+    setMaxPoints(arr.indexOf(Math.max(...arr)))  
   }
 
   return (
     <div>
-      {/* <textLine text="has " value={points[selected]}/> */}
-      <p>{anecdotes[selected]}</p>
-      <TotalPoints points={points[selected]}/>
+      <DailyAnecdote anecdotes={anecdotes[selected]} points={points[selected]} />
       <Button text="vote" handleClick={handleVoteAnecdote} />
       <Button text="next anecdote" handleClick={handleNextAnecdote} />
+      <MostLikedAnecdote anecdotes={anecdotes[maxPoints]} points={points[maxPoints]} />
     </div>
   )
 }
