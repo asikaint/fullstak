@@ -9,6 +9,17 @@ const Button = ({text, handleClick}) => {
   )
 }
 
+//
+const TotalPoints = (props) => {
+  return (
+    <div>
+      <p>
+        has {props.points} points
+      </p>
+    </div>
+  ) 
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -21,17 +32,26 @@ const App = () => {
   ]
    
   const [selected, setSelected] = useState(0)
+  const [points, setPoints] = useState(Array.apply(null, new Array(anecdotes.length)).map(Number.prototype.valueOf,0))
 
-  // Nappula palauttaa satunnaisluvun painettaessa
   const handleNextAnecdote = () => {
       setSelected(Math.floor((Math.random() * 6) + 1))
   }
 
+  // Nappula äänestämiseen
+  const handleVoteAnecdote = () => {
+    const copy = { ...points }
+    copy[selected] += 1   
+    setPoints(copy)
+  }
+
   return (
     <div>
+      {/* <textLine text="has " value={points[selected]}/> */}
       <p>{anecdotes[selected]}</p>
+      <TotalPoints points={points[selected]}/>
+      <Button text="vote" handleClick={handleVoteAnecdote} />
       <Button text="next anecdote" handleClick={handleNextAnecdote} />
-
     </div>
   )
 }
