@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 
 
 const Course = (props) => {
-  // console.log(props)
+   console.log("props ",props)
   const {course} = props
   return (
     <div>
@@ -57,41 +57,54 @@ const Total = (props) => {
   )
 }
 const App = () => {
-  const course = {
-    name: 'Half Stack application development',
-    id: 1,
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10,
-        id: 1
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7,
-        id: 2
-      },
-      {
-        name: 'State of a component',
-        exercises: 14,
-        id: 3
-      },
-      {
-        name: 'Redux',
-        exercises: 11,
-        id: 4
-      },
-      {
-        name: 'Redux2',
-        exercises: 13,
-        id: 5
-      }
-    ]
-  }
-
+  const courses = [
+    {
+      name: 'Half Stack application development',
+      id: 1,
+      parts: [
+        {
+          name: 'Fundamentals of React',
+          exercises: 10,
+          id: 1
+        },
+        {
+          name: 'Using props to pass data',
+          exercises: 7,
+          id: 2
+        },
+        {
+          name: 'State of a component',
+          exercises: 14,
+          id: 3
+        },
+        {
+          name: 'Redux',
+          exercises: 11,
+          id: 4
+        }
+      ]
+    }, 
+    {
+      name: 'Node.js',
+      id: 2,
+      parts: [
+        {
+          name: 'Routing',
+          exercises: 3,
+          id: 1
+        },
+        {
+          name: 'Middlewares',
+          exercises: 7,
+          id: 2
+        }
+      ]
+    }
+  ]
+  // Mapilla syötetään courseista jokainen erikseen kuten aiemmin 
   return (
     <div>
-      <Course course={course} />
+      {courses.map(course => <Course key={course.id} course={course}/>) }
     </div>
   )
 }
