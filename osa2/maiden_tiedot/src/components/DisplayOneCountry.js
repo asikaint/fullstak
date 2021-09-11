@@ -1,12 +1,12 @@
 import React from 'react'
 
 
-const DisplayOneCountry = (props) => {
+const DisplayOneCountry = ({country,text}) => {
 
     // Muodestetaan array (vaihtoehtoisesti mapissa kutsuittaisiin [props.country].map)
-    const countryArr = [props.country[0]];
+    console.log("country ",text,"   ",country);
     return (
-        countryArr.map(c =>
+        country.map(c =>
             <div key={c.name}> 
                 <h1> {c.name} </h1>
                 <ul>
@@ -24,11 +24,7 @@ const DisplayOneCountry = (props) => {
                 <img src={c.flag} alt="Country flag"  width="180" height="110"/>        
             </div>
         )
-
-
     )
-
-     
 }
 
 export default DisplayOneCountry

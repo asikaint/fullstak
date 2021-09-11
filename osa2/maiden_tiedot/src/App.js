@@ -6,6 +6,8 @@ import DisplayCountries from './components/DisplayCountries'
 function App() {
   const [ newFilter, setNewFilter] = useState('')
   const [newCountries, setNewCountries] = useState([])
+  const [showCountry,setShowCountry] = useState([]) 
+
   const handleFilterChange = (event) => {
     setNewFilter(event.target.value)
   }
@@ -27,11 +29,8 @@ function App() {
       countriesToShow = [...filterArr(newCountries.map(country => country),newFilter)]
   } else {
       countriesToShow = [...newCountries]
-      console.log('countriesToShow', countriesToShow);
-
   }
  
-
   return (
     <div >
       <FilterForm newFilter={newFilter} handleFilterChange={handleFilterChange} />
