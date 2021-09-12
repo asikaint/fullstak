@@ -5,9 +5,7 @@ const DisplayCountries = ({countries}) => {
     const [showOneCountry,setShowOneCountry] = useState(false) // To display one country
     const [oneCountry, setOneCountry] = useState([])
     const countriesLen = countries.length
-    console.log(showOneCountry);
-    console.log("oneCountry: ",[oneCountry]);
-    console.log("[countries[0]] ",[countries[0]]);
+
       // Ns. vakiomuotoillut vastaukset
     if (countriesLen > 10) {
         return (
@@ -37,22 +35,22 @@ const DisplayCountries = ({countries}) => {
                 )
             }
             {showOneCountry &&
-                    <p>
-                    <DisplayOneCountry country={[oneCountry]} text="button" />
-                    <button onClick = { () => 
-                        {setShowOneCountry(!showOneCountry)
-                        setOneCountry([])}
-                    }>
-                    hide
-                    </button>
-                    </p>
+                    <div>
+                        <DisplayOneCountry country={[oneCountry]}/>
+                        <button onClick = { () => 
+                            {setShowOneCountry(!showOneCountry)
+                            setOneCountry([])}
+                        }>
+                        hide
+                        </button>
+                    </div>
             }
             </div>
         )
     } 
     if (countriesLen === 1) {
         return (
-            <DisplayOneCountry country={[countries[0]]} text="filtered" />
+            <DisplayOneCountry country={[countries[0]]}/>
         )
     } 
 

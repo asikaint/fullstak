@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import FilterForm from './components/FilterForm'
 import DisplayCountries from './components/DisplayCountries'
-
+//REACT_APP_API_KEY=c79a378b8d22cb8e1979b30d06e06395 npm start
 function App() {
   const [ newFilter, setNewFilter] = useState('')
   const [newCountries, setNewCountries] = useState([])
-  const [showCountry,setShowCountry] = useState([]) 
 
   const handleFilterChange = (event) => {
     setNewFilter(event.target.value)
