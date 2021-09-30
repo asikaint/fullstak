@@ -1,32 +1,26 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
-import Persons from './components/Persons'
+import axios from 'axios'
+import PersonsShow from './components/PersonsShow'
+import personService from './services/persons'
+import persons from './services/persons'
+
 
 const App = () => {
 
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
-
-
+  const [persons, setPersons] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newFilter, setNewFilter ] = useState('')
 
-
-  const filterNames = (arr, query) => {
-    return arr.filter(el => el.name.toLowerCase().includes(query))
-  }
-
-  if (newFilter.length > 0) {
-    var namesToShow = [...filterNames(persons.map(person => person),newFilter)]
-  } else {
-    var namesToShow = [...persons]
-  }
+  useEffect(() => {
+    personService
+    .getAll()
+    .then(returnedData => {
+      setPersons(returnedData)
+    })
+  }, [])
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -38,32 +32,61 @@ const App = () => {
     setNewFilter(event.target.value)
   }
 
+  const filterNames = (arr, query) => {
+    return arr.filter(el => el.name.toLowerCase().includes(query))
+  }
+
+  if (newFilter.length > 0) {
+    var namesToShow = [...filterNames(persons.map(person => person),newFilter)]
+  } else {
+    var namesToShow = [...persons]
+  }
+
+
   const addName = (event) => {
     const nameObject = {
       name: newName,
       number: newNumber
     }
     event.preventDefault()
-
     const names = persons.map(person => person.name.toLocaleLowerCase())
     const numbers = persons.map(person => person.number)
-
     if (names.includes(newName.toLowerCase())) {
       window.alert(`${newName} is already added to phonebook`)
     } else if (numbers.includes(newNumber)) {
       window.alert(`${newNumber} is already added to phonebook`)
     } else {
-      setPersons(persons.concat(nameObject))
+      personService
+        .create(nameObject)
+        .then(returnedName => {
+          setPersons(persons.concat(returnedName))
+          setNewName('')
+          setNewNumber('')
+      })
     }
-    setNewName('')
-    setNewNumber('')
+  }
+
+  const removePerson = (id) => {
+    const person = persons.find(n => n.id === id)
+    if (window.confirm(`Remove ${person.name} `)) {    
+      personService
+      .remove(person.id)
+        .then(removedPerson => {
+        console.log("removed ",id);
+        setPersons(persons.filter((person) => person.id !== id))
+      })  
+      .catch(error => {
+        alert(
+          `the note '${person.name}': '${person.number}' was already deleted from server`
+        )
+      })
+    }
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
       <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/>
-
       <h3>add a new number</h3>
       <PersonForm 
         addName={addName} 
@@ -74,7 +97,14 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons namesToShow={namesToShow} />
+      <ul>
+        {namesToShow.map(person => 
+            <PersonsShow
+            person={person} 
+              removePerson={() => removePerson(person.id)}
+            />
+        )}
+      </ul>
     </div>
    )
 }
