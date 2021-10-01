@@ -7,12 +7,35 @@ import personService from './services/persons'
 import persons from './services/persons'
 
 
+const Notification = ({message}) => {
+  const notificationStyle = {
+    color: 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  }
+  if (message === null) {
+    return null
+  } else {
+    return (
+      <div style={notificationStyle}>
+        <br/>
+        <em>{message}</em>
+      </div>
+    )
+  }
+}
+
 const App = () => {
 
   const [persons, setPersons] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newFilter, setNewFilter ] = useState('')
+  const [ message, setMessage ] = useState('')
 
   useEffect(() => {
     personService
@@ -62,6 +85,10 @@ const App = () => {
           setPersons(persons.concat(returnedName))
           setNewName('')
           setNewNumber('')
+          setMessage(`Added ${returnedName.name}`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 3000)
       })
     }
   }
@@ -72,19 +99,24 @@ const App = () => {
       personService
       .remove(person.id)
         .then(removedPerson => {
-        console.log("removed ",id);
-        setPersons(persons.filter((person) => person.id !== id))
-      })  
+          setMessage(`Removed ${person.name}`)
+          setTimeout(()=> {
+            setMessage(null)
+          }, 3000)
+          setPersons(persons.filter((person) => person.id !== id))
+        })  
       .catch(error => {
-        alert(
-          `the note '${person.name}': '${person.number}' was already deleted from server`
-        )
+        setMessage(`the note '${person.name}': '${person.number}' was already deleted from server`)
+        setTimeout(()=> {
+          setMessage(null)
+        }, 3000)
       })
     }
   }
 
   return (
     <div>
+      <Notification message={message}/>
       <h2>Phonebook</h2>
       <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/>
       <h3>add a new number</h3>
@@ -100,6 +132,7 @@ const App = () => {
       <ul>
         {namesToShow.map(person => 
             <PersonsShow
+            key={person.id}
             person={person} 
               removePerson={() => removePerson(person.id)}
             />
