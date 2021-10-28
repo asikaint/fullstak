@@ -75,10 +75,21 @@ const App = () => {
     const names = persons.map(person => person.name.toLocaleLowerCase())
     const numbers = persons.map(person => person.number)
     if (names.includes(newName.toLowerCase())) {
-      window.alert(`${newName} is already added to phonebook`)
-    } else if (numbers.includes(newNumber)) {
-      window.alert(`${newNumber} is already added to phonebook`)
-    } else {
+      personService
+        .create(nameObject)
+        .then(returnedPerson => {
+          setPersons(persons.filter((person) => person.name !== returnedPerson.name).concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+          setMessage(`Changed ${returnedPerson.name} number to ${returnedPerson.number}`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 3000)
+      })
+
+    }
+    else
+    {
       personService
         .create(nameObject)
         .then(returnedName => {
