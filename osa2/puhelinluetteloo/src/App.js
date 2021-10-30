@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
-import axios from 'axios'
 import PersonsShow from './components/PersonsShow'
 import personService from './services/persons'
-import persons from './services/persons'
 
 
 const Notification = ({message}) => {
@@ -55,16 +53,7 @@ const App = () => {
     setNewFilter(event.target.value)
   }
 
-  const filterNames = (arr, query) => {
-    return arr.filter(el => el.name.toLowerCase().includes(query))
-  }
-
-  if (newFilter.length > 0) {
-    var namesToShow = [...filterNames(persons.map(person => person),newFilter)]
-  } else {
-    var namesToShow = [...persons]
-  }
-
+  const namesToShow = persons.filter(person => person.name.toLowerCase().includes(newFilter));
 
   const addName = (event) => {
     const nameObject = {
@@ -73,20 +62,25 @@ const App = () => {
     }
     event.preventDefault()
     const names = persons.map(person => person.name.toLocaleLowerCase())
-    const numbers = persons.map(person => person.number)
-    if (names.includes(newName.toLowerCase())) {
-      personService
-        .create(nameObject)
-        .then(returnedPerson => {
-          setPersons(persons.filter((person) => person.name !== returnedPerson.name).concat(returnedPerson))
-          setNewName('')
-          setNewNumber('')
-          setMessage(`Changed ${returnedPerson.name} number to ${returnedPerson.number}`)
-          setTimeout(() => {
-            setMessage(null)
-          }, 3000)
-      })
+    // const numbers = persons.map(person => person.number)
 
+    if (names.includes(newName.toLowerCase())) {
+      const name = names.find(name => name === newName)
+
+      if (window.confirm(`Name ${name} is already in the phonebook, are you sure you want to change the number `)) {
+        personService
+          .put(nameObject)
+          .then(returnedPerson => {
+            setPersons(persons.filter(person => person.name !== returnedPerson.name).concat(returnedPerson))
+            setNewName('')
+            setNewNumber('')
+            console.log(`updated name ${returnedPerson.name} number to ${returnedPerson.number}`)
+            setMessage(`Changed ${returnedPerson.name} number to ${returnedPerson.number}`)
+            setTimeout(() => {
+              setMessage(null)
+            }, 3000)
+        })
+      }
     }
     else
     {
