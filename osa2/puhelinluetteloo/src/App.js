@@ -3,29 +3,9 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import PersonsShow from './components/PersonsShow'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 
-const Notification = ({message}) => {
-  const notificationStyle = {
-    color: 'green',
-    background: 'lightgrey',
-    fontSize: 20,
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  }
-  if (message === null) {
-    return null
-  } else {
-    return (
-      <div style={notificationStyle}>
-        <br/>
-        <em>{message}</em>
-      </div>
-    )
-  }
-}
 
 const App = () => {
 
@@ -33,7 +13,10 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newFilter, setNewFilter ] = useState('')
-  const [ message, setMessage ] = useState('')
+  const [ message, setMessage ] = useState(null)
+  const [ errorMessage, setErrorMessage ] = useState(null)
+console.log(`message: `, message)
+console.log(`errorMessage: `, errorMessage)
 
   useEffect(() => {
     personService
@@ -62,16 +45,17 @@ const App = () => {
     }
     event.preventDefault()
     const names = persons.map(person => person.name.toLocaleLowerCase())
-    // const numbers = persons.map(person => person.number)
-
+  
     if (names.includes(newName.toLowerCase())) {
       const name = names.find(name => name === newName)
 
       if (window.confirm(`Name ${name} is already in the phonebook, are you sure you want to change the number `)) {
+        console.log("tääl")
         personService
           .put(nameObject)
           .then(returnedPerson => {
-            setPersons(persons.filter(person => person.name !== returnedPerson.name).concat(returnedPerson))
+            const newPersons = persons.filter(person => person.name !== returnedPerson.name).concat(returnedPerson)
+            setPersons(newPersons)
             setNewName('')
             setNewNumber('')
             console.log(`updated name ${returnedPerson.name} number to ${returnedPerson.number}`)
@@ -80,10 +64,14 @@ const App = () => {
               setMessage(null)
             }, 3000)
         })
+        .catch(error => { // Lyhyt nimi
+          setErrorMessage(``)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 3000)
+        })
       }
-    }
-    else
-    {
+    } else { // Ei ole lisätty
       personService
         .create(nameObject)
         .then(returnedName => {
@@ -93,6 +81,14 @@ const App = () => {
           setMessage(`Added ${returnedName.name}`)
           setTimeout(() => {
             setMessage(null)
+          }, 3000)
+      })
+      .catch(error => { // Lyhyt nimi
+        console.log(error.response.data.message)
+
+        setErrorMessage(`${error.response.data.message}`)
+          setTimeout(() => {
+            setErrorMessage(null)
           }, 3000)
       })
     }
@@ -111,17 +107,19 @@ const App = () => {
           setPersons(persons.filter((person) => person.id !== id))
         })  
       .catch(error => {
-        setMessage(`the note '${person.name}': '${person.number}' was already deleted from server`)
+        setErrorMessage(`the note '${person.name}': '${person.number}' was already deleted from server`)
         setTimeout(()=> {
-          setMessage(null)
+          setErrorMessage(null)
         }, 3000)
       })
     }
   }
-
+  
   return (
     <div>
-      <Notification message={message}/>
+      <Notification message={message} messageClass={`person`}/>
+      <Notification message={errorMessage} messageClass={`error`}/>
+
       <h2>Phonebook</h2>
       <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/>
       <h3>add a new number</h3>
